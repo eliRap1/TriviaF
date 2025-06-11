@@ -1,8 +1,8 @@
 #pragma once
-//#include "LoggedUser.h"
 #include "RequestHandlerFactory.h"
-//#include "JsonResponsePacketSerializer.h"
 #include "IRequestHandler.h"
+#include "RoomAdminRequestHandler.h"
+#include "RoomMemberRequestHandler.h"
 class MenuRequestHandler : public IRequestHandler
 {
 private:

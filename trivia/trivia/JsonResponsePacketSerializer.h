@@ -20,7 +20,10 @@ enum ResponseCode {
 	CLOSE_ROOM_CODE = 11,
 	START_GAME_CODE = 12,
 	GET_ROOM_STATE_CODE = 13,
-	LEAVE_ROOM_CODE = 14
+	LEAVE_ROOM_CODE = 14,
+	GET_GAME_RESULTS_CODE = 15,
+	SUBMIT_ANSWER_CODE = 16,
+	GET_QUESTION_CODE = 17,
 };
 
 // --- REQUEST STRUCTS ---
@@ -87,6 +90,33 @@ typedef struct GetRoomStateResponse {
 typedef struct LeaveRoomResponse {
 	unsigned int status;
 } LeaveRoomResponse;
+typedef struct PlayerResults {
+	std::string username;
+	unsigned int correctAnswerCount;
+	unsigned int wrongAnswerCount;
+	unsigned int averageAnswerTime;
+} PlayerResults;
+
+typedef struct GetGameResultsResponse {
+	unsigned int status;
+	std::vector<PlayerResults> results;
+} GetGameResultsResponse;
+
+typedef struct SubmitAnswerResponse {
+	unsigned int status;
+	unsigned int correctAnswerId;
+} SubmitAnswerResponse;
+
+typedef struct GetQuestionResponse {
+	unsigned int status;
+	std::string question;
+	std::map<unsigned int, std::string> answers;
+} GetQuestionResponse;
+
+typedef struct LeaveGameResponse {
+	unsigned int status;
+} LeaveGameResponse;
+
 class JsonResponsePacketSerializer
 {
 public:
@@ -104,4 +134,8 @@ public:
 	static std::vector<unsigned char> serializeResponse(const StartGameResponse&);
 	static std::vector<unsigned char> serializeResponse(const GetRoomStateResponse&);
 	static std::vector<unsigned char> serializeResponse(const LeaveRoomResponse&);
+	static std::vector<unsigned char> serializeResponse(const GetGameResultsResponse&);
+	static std::vector<unsigned char> serializeResponse(const SubmitAnswerResponse&);
+	static std::vector<unsigned char> serializeResponse(const GetQuestionResponse&);
+	static std::vector<unsigned char> serializeResponse(const LeaveGameResponse&);
 };

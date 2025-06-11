@@ -58,3 +58,13 @@ CreateRoomRequest JsonRequestPacketDeserializer::deserializeCreateRoomRequest(co
 	request.QuestionsCount = j["QuestionsCount"];
 	return request;
 }
+
+SumbitAnswerRequest deserializeSumbitAnswerRequest(const std::vector<unsigned char>& buffer)
+{
+	std::string jsonStr(buffer.begin(), buffer.end());
+	json j = json::parse(jsonStr);
+
+	SumbitAnswerRequest request;
+	request.answerId = j["answerId"];
+	return request;
+}

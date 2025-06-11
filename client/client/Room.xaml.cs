@@ -49,36 +49,36 @@ namespace client
         }
         private void CheckPlayers(object sender, EventArgs e)
         {
-            byte[] request = Serializer.SerializeSimpleRequest(Serializer.GET_ROOM_STATE_CODE);
-            byte[] response = MainWindow.communicator.sendAndReceive(request);
-            MessageBox.Show("Status: " + Deserializer.extractStatus(response).ToString());
-
-            request = Serializer.SearalizeGetPlayersInRoomRequest(room1.id);
+            byte[] request;
+            byte[] response;
+            request = Serializer.SerializeSimpleRequest(Serializer.GET_ROOM_STATE_CODE);
             response = MainWindow.communicator.sendAndReceive(request);
-            List<string> players = Deserializer.DeserializeGetPlayersInRoomResponse(response);
+            GetRoomStateResponse state = Deserializer.DesirializeGetRoomStateResponse(response);
+            List<string> players = state.players;
             playersList.ItemsSource = players;
-            adminName.Text = players[0];
-            if(Login.user == players[0])
+            try
             {
-                start.Visibility = Visibility.Visible;
+                adminName.Text = players[0];
+                if (Login.user == players[0])
+                {
+                    start.Visibility = Visibility.Visible;
+                }
             }
-            if(players.Count == 0)
+            catch
             {
-                request = Serializer.SerializeSimpleRequest(Serializer.CLOSE_ROOM_CODE);
-                response = MainWindow.communicator.sendAndReceive(request);
-                MessageBox.Show("Status: " + Deserializer.extractStatus(response).ToString());
-                updatePlayersTimer.Stop();
             }
-            if(adminName.Text == Login.user + " (Admin)")
+            if(state.hasGameBegun)
             {
                 MessageBox.Show("Game has started!");
-                triviaF.Navigate(new Trivia());
+                triviaF.Navigate(new Game(this.room1));
+                updatePlayersTimer.Stop();
 
             }
-            if(adminName.Text == "z")
+            if(state.status == 0)
             {
                 MessageBox.Show("Admin left the room!/ Closing room");
                 Back_Click(null, new RoutedEventArgs());
+                updatePlayersTimer.Stop();
             }
         }
         public static int CheckPlayersList(int roomId)
@@ -92,23 +92,15 @@ namespace client
         {
             if(Login.user == adminName.Text)
             {
-                adminName.Text = "z";
                 byte[] request1 = Serializer.SerializeSimpleRequest(Serializer.CLOSE_ROOM_CODE);
                 byte[] response1 = MainWindow.communicator.sendAndReceive(request1);
-                MessageBox.Show("Status: " + Deserializer.extractStatus(response1).ToString());
                 updatePlayersTimer.Stop();
+                triviaF.Navigate(new Trivia());
             }
-            //byte[] request = Serializer.serializeLogoutRequest(Login.user);
-            //byte[] response = MainWindow.communicator.sendAndReceive(request);
-            //request = Serializer.serializeLoginRequest(Login.user, Login.pass);
-            //response = MainWindow.communicator.sendAndReceive(request);
             else
             {
                 byte[] request = Serializer.SerializeSimpleRequest(Serializer.LEAVE_ROOM_CODE);
                 byte[] response = MainWindow.communicator.sendAndReceive(request);
-                MessageBox.Show("Status: " + Deserializer.extractStatus(response).ToString());
-
-                CheckPlayers(null, EventArgs.Empty);
                 updatePlayersTimer.Stop();
                 triviaF.Navigate(new Trivia());
             }
@@ -120,7 +112,7 @@ namespace client
             adminName.Text = Login.user + " (Admin)";
             byte[] request = Serializer.SerializeSimpleRequest(Serializer.START_GAME_CODE);
             byte[] response = MainWindow.communicator.sendAndReceive(request);
-            MessageBox.Show("Status: "+Deserializer.extractStatus(response).ToString());
+            //MessageBox.Show("Status: "+Deserializer.extractStatus(response).ToString());
             gameStarted = true;
         }
     }

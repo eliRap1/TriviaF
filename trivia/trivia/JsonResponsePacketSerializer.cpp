@@ -172,3 +172,61 @@ std::vector<unsigned char> JsonResponsePacketSerializer::serializeResponse(const
 	buffer.insert(buffer.end(), dump.begin(), dump.end());
 	return buffer;
 }
+std::vector<unsigned char> JsonResponsePacketSerializer::serializeResponse(const GetGameResultsResponse& res) {
+	json j;
+	j["status"] = res.status;
+	j["results"] = json::array();
+	for (const PlayerResults& pr : res.results) {
+		json playerJson;
+		playerJson["username"] = pr.username;
+		playerJson["correctAnswerCount"] = pr.correctAnswerCount;
+		playerJson["wrongAnswerCount"] = pr.wrongAnswerCount;
+		playerJson["averageAnswerTime"] = pr.averageAnswerTime;
+		j["results"].push_back(playerJson);
+	}
+	std::string dump = j.dump();
+	std::vector<unsigned char> buffer;
+	buffer.push_back(GET_GAME_RESULTS_CODE);
+	addLengthToBuffer(buffer, dump.size());
+	buffer.insert(buffer.end(), dump.begin(), dump.end());
+	return buffer;
+}
+
+std::vector<unsigned char> JsonResponsePacketSerializer::serializeResponse(const SubmitAnswerResponse& res) {
+	json j;
+	j["status"] = res.status;
+	j["correctAnswerId"] = res.correctAnswerId;
+	std::string dump = j.dump();
+	std::vector<unsigned char> buffer;
+	buffer.push_back(SUBMIT_ANSWER_CODE);
+	addLengthToBuffer(buffer, dump.size());
+	buffer.insert(buffer.end(), dump.begin(), dump.end());
+	return buffer;
+}
+
+std::vector<unsigned char> JsonResponsePacketSerializer::serializeResponse(const GetQuestionResponse& res) {
+	json j;
+	j["status"] = res.status;
+	j["question"] = res.question;
+	j["answers"] = json::object();
+	for (const std::pair<const unsigned int, std::string>& pair : res.answers) {
+		j["answers"][std::to_string(pair.first)] = pair.second;
+	}
+	std::string dump = j.dump();
+	std::vector<unsigned char> buffer;
+	buffer.push_back(GET_QUESTION_CODE);
+	addLengthToBuffer(buffer, dump.size());
+	buffer.insert(buffer.end(), dump.begin(), dump.end());
+	return buffer;
+}
+
+std::vector<unsigned char> JsonResponsePacketSerializer::serializeResponse(const LeaveGameResponse& res) {
+	json j;
+	j["status"] = res.status;
+	std::string dump = j.dump();
+	std::vector<unsigned char> buffer;
+	buffer.push_back(LEAVE_ROOM_CODE);
+	addLengthToBuffer(buffer, dump.size());
+	buffer.insert(buffer.end(), dump.begin(), dump.end());
+	return buffer;
+}

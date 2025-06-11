@@ -32,3 +32,12 @@ const std::vector<std::string> Room::getUsers() const {
 }
 
 const RoomData& Room::getRoomData() const { return m_metadata; }
+void Room::setState(RoomState state)
+{
+	m_state = state;
+}
+
+Room::RoomState Room::getState() const
+{
+	return m_state;
+}
