@@ -22,7 +22,6 @@ namespace client
     public partial class JoinRoom : Page
     {
         private DispatcherTimer updateTimer;
-
         public JoinRoom()
         {
             InitializeComponent();

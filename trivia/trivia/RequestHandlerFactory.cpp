@@ -1,5 +1,9 @@
 #include "RequestHandlerFactory.h"
 #include "LoginRequestHandler.h"
+#include "MenuRequestHandler.h"
+#include "RoomAdminRequestHandler.h"
+#include "RoomMemberRequestHandler.h"
+
 RequestHandlerFactory::RequestHandlerFactory(IDatabase* database)
 	: m_database(database),
 	m_loginManager(database),
@@ -16,6 +20,16 @@ IRequestHandler* RequestHandlerFactory::createLoginRequestHandler()
 MenuRequestHandler* RequestHandlerFactory::createMenuRequestHandler(const LoggedUser& user)
 {
 	return new MenuRequestHandler(user, *this);
+}
+
+RoomAdminRequestHandler* RequestHandlerFactory::createRoomAdminRequestHandler(const LoggedUser& user)
+{
+	return new RoomAdminRequestHandler(user, *this);
+}
+
+RoomMemberRequestHandler* RequestHandlerFactory::createRoomMemberRequestHandler(const LoggedUser& user)
+{
+	return new RoomMemberRequestHandler(user, *this);
 }
 
 LoginManager& RequestHandlerFactory::getLoginManager()

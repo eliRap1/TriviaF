@@ -46,24 +46,31 @@ namespace client
  
             if (status == 1)
             {
-                MessageBox.Show("Room created successfully!");
-                request = Serializer.serializeGetRoomsRequest();
+                request = Serializer.SerializeSimpleRequest(Serializer.GET_ROOM_STATE_CODE);
                 response = MainWindow.communicator.sendAndReceive(request);
-                int id = -1;
-                List<RoomInfo> rooms = Deserializer.DeserializeGetRoomsResponse(response);
-                Room roomNow;
-                foreach (var room in rooms)
-                {
-                    if (room.name == RoomNameTextBox.Text)
-                    {
-                        id = room.id;
-                        roomNow = new Room(room, Login.user);
-                        request = Serializer.SearalizeJoinRoomRequest(id);
-                        response = MainWindow.communicator.sendAndReceive(request);
-                        if(Deserializer.extractStatus(response) != 1) MessageBox.Show("Error joining room");
-                        JoinRoomFrame.Navigate(roomNow);
-                    }
-                }
+                GetRoomStateResponse state = Deserializer.DesirializeGetRoomStateResponse(response);
+                MessageBox.Show("Room created successfully!");
+                int id;
+                RoomInfo roomInfo = new RoomInfo(state.status, RoomNameTextBox.Text, int.Parse(PlayersAmountTextBox.Text), int.Parse(QuestionAmount.Text), int.Parse(QuestionTimeTextBox.Text));
+                Room roomNow = new Room(roomInfo, Login.user);
+                JoinRoomFrame.Navigate(roomNow);
+                //request = Serializer.serializeGetRoomsRequest();
+                //response = MainWindow.communicator.sendAndReceive(request);
+                //id = -1;
+                //List<RoomInfo> rooms = Deserializer.DeserializeGetRoomsResponse(response);
+                //Room roomNow;
+                //foreach (var room in rooms)
+                //{
+                //    if (room.name == RoomNameTextBox.Text)
+                //    {
+                //        id = room.id;
+                //        roomNow = new Room(room, Login.user);
+                //        request = Serializer.SearalizeJoinRoomRequest(id);
+                //        response = MainWindow.communicator.sendAndReceive(request);
+                //        if (Deserializer.extractStatus(response) != 1) MessageBox.Show("Error joining room");
+                //        JoinRoomFrame.Navigate(roomNow);
+                //    }
+                //}
             }
         }
 

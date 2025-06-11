@@ -17,6 +17,10 @@ namespace client
         private const int CREATE_ROOM_CODE = 8;
         private const int HIGH_SCORE_CODE = 9;
         private const int PERSONAL_STATS_CODE = 10;
+        public const int CLOSE_ROOM_CODE = 11;
+        public const int START_GAME_CODE = 12;
+        public const int GET_ROOM_STATE_CODE = 13;
+        public const int LEAVE_ROOM_CODE = 14;
 
 
         public static byte[] serializeSignupRequest(string username, string password, string email)

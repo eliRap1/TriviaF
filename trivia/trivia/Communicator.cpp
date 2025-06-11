@@ -98,7 +98,6 @@ void Communicator::handleNewClients(const SOCKET& c)
 				reqInfo.id = requestId;
 				reqInfo.receivalTime = std::time(nullptr);
 				reqInfo.buffer = std::move(buffer);
-
 				// 4) handle relevance & dispatch
 				RequestResult result;
 				if (currentHandler->isRequestRelevant(reqInfo))

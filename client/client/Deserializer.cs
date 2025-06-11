@@ -12,11 +12,20 @@ namespace client
 {
     public class RoomInfo
     {
+        public RoomInfo(int id, string name, int maxPlayers, int numOfQuestionsInGame, int timePerQuestion) { this.id = id; this.name = name; this.maxPlayers = maxPlayers; this.numOfQuestionsInGame = numOfQuestionsInGame; this.timePerQuestion = timePerQuestion; }
         public int id { get; set; }
         public string name { get; set; }
         public int maxPlayers { get; set; }
         public int numOfQuestionsInGame { get; set; }
         public int timePerQuestion { get; set; }
+    }
+    public class GetRoomStateResponse
+    {
+        public int status { get; set; }
+        public bool hasGameBegun { get; set; }
+        public List<string> players { get; set; }
+        public int questionCount { get; set; }
+        public int answerTimeout { get; set; }
     }
 
     public class GetRoomsResponse
@@ -102,7 +111,26 @@ namespace client
                 return new List<string>();
             }
         }
+        public static GetRoomStateResponse DesirializeGetRoomStateResponse(byte[] responseData)
+        {
+            const int headerSize = 5; // skip the header
 
+            if (responseData.Length <= headerSize)
+                return new GetRoomStateResponse(); // invalid response
+
+            try
+            {
+                byte[] jsonBytes = responseData.Skip(headerSize).ToArray();
+                string json = Encoding.UTF8.GetString(jsonBytes);
+
+                return JsonConvert.DeserializeObject<GetRoomStateResponse>(json);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Error while deserializing: {e.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return new GetRoomStateResponse();
+            }
+        }
 
     }
 }

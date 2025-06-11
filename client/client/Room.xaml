@@ -81,7 +81,7 @@
         HorizontalAlignment="Center"
         VerticalAlignment="Bottom"
         Margin="10"
-
+        Click="start_Click"
         Background="#4CAF50"
         Foreground="White"
         FontWeight="Bold"

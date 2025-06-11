@@ -3,7 +3,6 @@
 #include "LoggedUser.h"
 #include <map>
 #include <vector>
-
 class RoomManager
 {
 public:

@@ -31,6 +31,14 @@ RequestResult MenuRequestHandler::handleRequest(RequestInfo& request)
 		return getPersonalStats(request);
 	case HIGH_SCORE_CODE:
 		return getHighScores(request);
+	//case CLOSE_ROOM_CODE:
+	//	
+	//case START_GAME_CODE:
+	//	return 
+	//case GET_ROOM_STATE_CODE:
+	//	return 
+	//case LEAVE_ROOM_CODE:
+	//	return 
 	default:
 		return RequestResult{
 			JsonResponsePacketSerializer::serializeResponse(
@@ -104,19 +112,20 @@ RequestResult MenuRequestHandler::createRoom(RequestInfo& request)
 	CreateRoomResponse response{ 1 };
 	return RequestResult{
 		JsonResponsePacketSerializer::serializeResponse(response),
-		nullptr
+		new RoomAdminRequestHandler(m_loggedUser, m_handlerFactory)
 	};
 }
 
 RequestResult MenuRequestHandler::joinRoom(RequestInfo& request)
 {
+	RequestResult res;
 	auto req = JsonRequestPacketDeserializer::deserializeJoinRoomRequest(request.buffer);
 	m_handlerFactory.getRoomManager().getRoom(req.roomId).addUser(m_loggedUser);
 
 	JoinRoomResponse response{ 1 };
 	return RequestResult{
 		JsonResponsePacketSerializer::serializeResponse(response),
-		nullptr
+		new RoomMemberRequestHandler(m_loggedUser, m_handlerFactory)
 	};
 }
 
