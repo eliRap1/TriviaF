@@ -21,6 +21,7 @@ public:
     int getNumOfCorrectAnswers(const std::string& username);
     int getNumOfTotalAnswers(const std::string& username);
     int getNumOfPlayerGames(const std::string& username);
+    int submitGameStatistics(const GameData& data) override;
 
 private:
 	sqlite3* db;

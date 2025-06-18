@@ -1,14 +1,12 @@
 #pragma once
 #include <string>
 
-class LoggedUser
-{
+class LoggedUser {
 public:
     LoggedUser(const std::string& username);
-
     std::string getUsername() const;
 
-    bool operator==(const LoggedUser& other) const;
+    bool operator<(const LoggedUser& other) const;
 
 private:
     std::string m_username;

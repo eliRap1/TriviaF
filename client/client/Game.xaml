@@ -90,9 +90,9 @@
                       HorizontalAlignment="Center">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Player"    DisplayMemberBinding="{Binding Name}"       Width="200"/>
-                        <GridViewColumn Header="Correct"   DisplayMemberBinding="{Binding Correct}"    Width="100"/>
-                        <GridViewColumn Header="Avg Time"  DisplayMemberBinding="{Binding AvgTime}"    Width="150"/>
+                        <GridViewColumn Header="Player"    DisplayMemberBinding="{Binding username}"       Width="200"/>
+                        <GridViewColumn Header="Correct"   DisplayMemberBinding="{Binding correctAnswerCount}"    Width="100"/>
+                        <GridViewColumn Header="Avg Time"  DisplayMemberBinding="{Binding averageAnswerTime}"    Width="150"/>
                     </GridView>
                 </ListView.View>
             </ListView>

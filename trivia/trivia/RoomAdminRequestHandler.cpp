@@ -82,7 +82,7 @@ RequestResult RoomAdminRequestHandler::startGame(RequestInfo& request)
 
     auto& room = m_handlerFactory.getRoomManager().getRoom(roomId);
     room.setState(Room::RoomState::STARTED);
-
+	//m_handlerFactory.getRoomManager().deleteRoom(roomId);
     StartGameResponse response{ 1 };
     auto buffer = JsonResponsePacketSerializer::serializeResponse(response);
 

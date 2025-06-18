@@ -17,7 +17,7 @@ IRequestHandler* RequestHandlerFactory::createLoginRequestHandler()
 	return new LoginRequestHandler(*this);
 }
 
-MenuRequestHandler* RequestHandlerFactory::createMenuRequestHandler(const LoggedUser& user)
+IRequestHandler* RequestHandlerFactory::createMenuRequestHandler(const LoggedUser& user)
 {
 	return new MenuRequestHandler(user, *this);
 }

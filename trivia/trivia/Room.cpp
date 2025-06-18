@@ -1,5 +1,4 @@
 #include "Room.h"
-
 Room::Room(const LoggedUser& user, const RoomData& metadata) : m_metadata(metadata) { m_users.push_back(user); }
 void Room::addUser(const LoggedUser& user)
 {

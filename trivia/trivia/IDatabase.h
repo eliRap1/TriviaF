@@ -1,11 +1,13 @@
 #pragma once
+
 #include <string>
 #include <vector>
 #include <list>
-#include "Question.h"
-class IDatabase
-{
+#include "GameData.h"
+
+class IDatabase {
 public:
+    virtual ~IDatabase() = default;
     virtual bool open() = 0;
     virtual bool close() = 0;
     virtual int doesUserExist(const std::string& username) = 0;
@@ -18,4 +20,5 @@ public:
     virtual int getNumOfPlayerGames(const std::string& username) = 0;
     virtual int getPlayerScore(const std::string& username) = 0;
     virtual std::vector<std::string> getHighScores() = 0;
+    virtual int submitGameStatistics(const GameData& data) = 0;
 };

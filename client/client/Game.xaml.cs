@@ -27,12 +27,12 @@ namespace client
         private int currentIndex;
         private int correctCount;
         private double totalAnswerTime;
-        public class PlayerResult
-        {
-            public string Name { get; set; }
-            public int Correct { get; set; }
-            public double AvgTime { get; set; }
-        }
+        //public class PlayerResult
+        //{
+        //    public string Name { get; set; }
+        //    public int Correct { get; set; }
+        //    public double AvgTime { get; set; }
+        //}
         public Game(RoomInfo room)
         {
             InitializeComponent();
@@ -48,11 +48,34 @@ namespace client
             QuestionsLeftText.Text = correctCount.ToString();
             QuestionTimerBar.Maximum = timePerQuestion;
             QuestionTimerBar.Value = timeLeft;
+            NextQuestion();
 
         }
 
         private void Answer_Click(object sender, RoutedEventArgs e)
         {
+            byte[] request = Serializer.SerializeSumbitAnswerRequest(Convert.ToInt32((sender as Button).Tag));
+            byte[] response = MainWindow.communicator.sendAndReceive(request);
+            AnswerResponse answer = Deserializer.DeserializeAnswerResponse(response);
+            if (answer.correctAnswerId == Convert.ToInt32((sender as Button).Tag))
+            {
+                currentIndex++;
+                if (currentIndex == correctCount)
+                {
+                    timer.Stop();
+                    ResultsView.Visibility = Visibility.Visible;
+                    QuestionView.Visibility = Visibility.Collapsed;
+                    byte[] request1 = Serializer.SerializeSimpleRequest(Serializer.GET_GAME_RESULTS_CODE);
+                    byte[] response1 = MainWindow.communicator.sendAndReceive(request1);
+                    GetGameRequest game = Deserializer.DeserializeGetGameRequest(response1);
+                    ResultsList.ItemsSource = game.players;
+                }
+                else
+                {
+                    NextQuestion();
+                }
+            }
+               
             QuestionTimerBar.Maximum = timePerQuestion;
             QuestionTimerBar.Value = timePerQuestion;
             timeLeft = timePerQuestion;
@@ -61,6 +84,18 @@ namespace client
         private void NextQuestion()
         {
             timer.Start();
+            byte[] request = Serializer.SerializeSimpleRequest(Serializer.GET_QUESTION_CODE);
+            byte[] response = MainWindow.communicator.sendAndReceive(request);
+            GetQuestionResponse qusestion = Deserializer.DeserializeGetQuestionResponse(response);
+            QuestionText.Text = qusestion.question;
+            AnswerButton1.Content = qusestion.answers.Values.ElementAt(0);
+            AnswerButton2.Content = qusestion.answers.Values.ElementAt(1);
+            AnswerButton3.Content = qusestion.answers.Values.ElementAt(2);
+            AnswerButton4.Content = qusestion.answers.Values.ElementAt(3);
+            AnswerButton1.Tag = qusestion.answers.Keys.ElementAt(0);
+            AnswerButton2.Tag = qusestion.answers.Keys.ElementAt(1);
+            AnswerButton3.Tag = qusestion.answers.Keys.ElementAt(2);
+            AnswerButton4.Tag = qusestion.answers.Keys.ElementAt(3);
         }
         private void Timer_Tick(object sender, EventArgs e)
         {
@@ -75,11 +110,10 @@ namespace client
                     timer.Stop();
                     ResultsView.Visibility = Visibility.Visible;
                     QuestionView.Visibility = Visibility.Collapsed;
-                    ResultsList.ItemsSource = new List<PlayerResult>
-                    {
-                        new PlayerResult { Name="Eli", Correct=5, AvgTime=3.2 },
-                        new PlayerResult { Name="idan",   Correct=4, AvgTime=4.1 }
-                    };
+                    byte[] request = Serializer.SerializeSimpleRequest(Serializer.GET_GAME_RESULTS_CODE);
+                    byte[] response = MainWindow.communicator.sendAndReceive(request);
+                    GetGameRequest game = Deserializer.DeserializeGetGameRequest(response);
+                    ResultsList.ItemsSource = game.players;
                 }
                 NextQuestion();
             }

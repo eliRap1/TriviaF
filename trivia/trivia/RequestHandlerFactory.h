@@ -3,19 +3,18 @@
 #include "LoginManager.h"
 #include "StatisticsManager.h"
 #include "RoomManager.h"
-
+#include "GameManager.h"
 class MenuRequestHandler;
 class LoginRequestHandler;
 class RoomAdminRequestHandler;
 class RoomMemberRequestHandler;
-
 class RequestHandlerFactory
 {
 public:
 	RequestHandlerFactory(IDatabase* database);
 
 	IRequestHandler* createLoginRequestHandler();
-	MenuRequestHandler* createMenuRequestHandler(const LoggedUser& user);
+	IRequestHandler* createMenuRequestHandler(const LoggedUser& user);
 	RoomAdminRequestHandler* createRoomAdminRequestHandler(const LoggedUser& user);
 	RoomMemberRequestHandler* createRoomMemberRequestHandler(const LoggedUser& user);
 

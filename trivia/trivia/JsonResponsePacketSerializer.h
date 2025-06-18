@@ -116,7 +116,6 @@ typedef struct GetQuestionResponse {
 typedef struct LeaveGameResponse {
 	unsigned int status;
 } LeaveGameResponse;
-
 class JsonResponsePacketSerializer
 {
 public:

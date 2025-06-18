@@ -38,7 +38,9 @@ namespace client
             updateTimer.Interval = TimeSpan.FromSeconds(3);
             updateTimer.Tick += Refresh;
             updateTimer.Start();
+
         }
+
         private void Refresh(object sender, EventArgs e)
         {
             RoomsPanel.Children.Clear();
@@ -52,7 +54,6 @@ namespace client
                 AddRoomCard(room);
             }
         }
-
         private void AddRoomCard(RoomInfo room)
         {
             // create card container

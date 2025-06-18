@@ -270,3 +270,24 @@ int SqliteDataBase::getNumOfPlayerGames(const std::string& username)
 	}
 	return count;
 }
+
+int SqliteDataBase::submitGameStatistics(const GameData& data) {
+	try {
+		std::string sql = "INSERT INTO GameStatistics (correctAnswers, wrongAnswers, averageTime) VALUES (?, ?, ?);";
+		sqlite3_stmt* stmt;
+		if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK)
+			return 0;
+
+		sqlite3_bind_int(stmt, 1, data.correctAnswerCount);
+		sqlite3_bind_int(stmt, 2, data.wrongAnswerCount);
+		sqlite3_bind_int(stmt, 3, data.averageAnswerTime);
+
+		int rc = sqlite3_step(stmt);
+		sqlite3_finalize(stmt);
+		return (rc == SQLITE_DONE) ? 1 : 0;
+	}
+	catch (...) {
+		return 0;
+	}
+}
+

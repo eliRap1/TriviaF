@@ -39,6 +39,33 @@ namespace client
         [JsonProperty("players")]
         public List<string> Players { get; set; }
     }
+    public class GetGameRequest
+    {
+        public int status { get; set; }
+        public List<PlayerRequest> players { get; set; }
+    }
+    public class PlayerRequest
+    {
+        string username { get; set; }
+        int correctAnswerCount { get; set; }
+        int wrongAnswerCount { get; set; }
+        int averageAnswerTime { get; set; }
+    }
+
+    public class GetQuestionResponse
+    {
+        public int status { get; set; }
+        public string question { get; set; }
+        public Dictionary<int, string> answers { get; set; }
+    }
+
+    public class AnswerResponse
+    {
+        public int status { get; set; }
+        public int correctAnswerId { get; set; }
+    }
+
+
     public class Deserializer
     {
         public static int extractStatus(byte[] responseData)
@@ -131,6 +158,67 @@ namespace client
                 return new GetRoomStateResponse();
             }
         }
+        public static GetGameRequest DeserializeGetGameRequest(byte[] responseData)
+        {
+            const int headerSize = 5; // skip the header
+
+            if (responseData.Length <= headerSize)
+                return new GetGameRequest(); // invalid response
+
+            try
+            {
+                byte[] jsonBytes = responseData.Skip(headerSize).ToArray();
+                string json = Encoding.UTF8.GetString(jsonBytes);
+
+                return JsonConvert.DeserializeObject<GetGameRequest>(json);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Error while deserializing: {e.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return new GetGameRequest();
+            }
+        }
+        public static GetQuestionResponse DeserializeGetQuestionResponse(byte[] responseData)
+        {
+            const int headerSize = 5; // skip the header
+
+            if (responseData.Length <= headerSize)
+                return new GetQuestionResponse(); // invalid response
+
+            try
+            {
+                byte[] jsonBytes = responseData.Skip(headerSize).ToArray();
+                string json = Encoding.UTF8.GetString(jsonBytes);
+
+                return JsonConvert.DeserializeObject<GetQuestionResponse>(json);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Error while deserializing: {e.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return new GetQuestionResponse();
+            }
+        }
+        public static AnswerResponse DeserializeAnswerResponse(byte[] responseData)
+        {
+            const int headerSize = 5; // skip the header
+
+            if (responseData.Length <= headerSize)
+                return new AnswerResponse(); // invalid response
+
+            try
+            {
+                byte[] jsonBytes = responseData.Skip(headerSize).ToArray();
+                string json = Encoding.UTF8.GetString(jsonBytes);
+
+                return JsonConvert.DeserializeObject<AnswerResponse>(json);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Error while deserializing: {e.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return new AnswerResponse();
+            }
+        }
+
 
     }
 }
