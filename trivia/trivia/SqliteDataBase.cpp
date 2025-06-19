@@ -44,11 +44,10 @@ void SqliteDataBase::createTables()
         CREATE TABLE IF NOT EXISTS questions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             question TEXT NOT NULL,
-            answer1 TEXT NOT NULL,
-            answer2 TEXT NOT NULL,
-            answer3 TEXT NOT NULL,
-            answer4 TEXT NOT NULL,
-            correct_answer INTEGER NOT NULL CHECK(correct_answer BETWEEN 1 AND 4)
+            correct_answer TEXT NOT NULL,
+            incorrect1 TEXT NOT NULL,
+            incorrect2 TEXT NOT NULL,
+            incorrect3 TEXT NOT NULL
         );
     )";
 
@@ -144,26 +143,42 @@ int SqliteDataBase::addNewUser(const std::string& username, const std::string& p
 std::list<Question> SqliteDataBase::getQuestions(int amount)
 {
 	std::list<Question> questions;
-	std::string sql = "SELECT question, answer1, answer2, answer3, answer4, correct_answer FROM questions LIMIT " + std::to_string(amount);
+	// ORDER BY RANDOM() might be slow on large tables, but ok for this size.
+	std::string sql = "SELECT question, correct_answer, incorrect1, incorrect2, incorrect3 FROM questions ORDER BY RANDOM() LIMIT " + std::to_string(amount);
 	sqlite3_stmt* stmt = nullptr;
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK)
 	{
+
 		while (sqlite3_step(stmt) == SQLITE_ROW)
 		{
 			std::string questionText = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
-			std::vector<std::string> answers;
-			for (int i = 0; i < 4; ++i)
-			{
-				answers.push_back(reinterpret_cast<const char*>(sqlite3_column_text(stmt, i + 1)));
-			}
-			int correctAnswerIndex = sqlite3_column_int(stmt, 5) - 1;
+			std::string correctAnswerText = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+			std::string incorrectAnswer1Text = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+			std::string incorrectAnswer2Text = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
+			std::string incorrectAnswer3Text = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
 
-			Question q(questionText, answers, correctAnswerIndex);
+			std::vector<std::string> possibleAnswers;
+			possibleAnswers.push_back(correctAnswerText);
+			possibleAnswers.push_back(incorrectAnswer1Text);
+			possibleAnswers.push_back(incorrectAnswer2Text);
+			possibleAnswers.push_back(incorrectAnswer3Text);
+
+			int correctAnswerIndex = -1;
+			for (size_t i = 0; i < possibleAnswers.size(); ++i)
+			{
+				if (possibleAnswers[i] == correctAnswerText)
+				{
+					correctAnswerIndex = static_cast<int>(i);
+					break;
+				}
+			}
+
+			Question q(questionText, possibleAnswers, correctAnswerIndex);
 			questions.push_back(q);
 		}
 	}
-	sqlite3_finalize(stmt);
+	sqlite3_finalize(stmt); // Ensure finalization even if prepare fails or no rows are fetched
 	return questions;
 }
 
