@@ -1,5 +1,7 @@
 #include "SqliteDataBase.h"
 #include <iostream>
+#include <string>
+#include <vector>
 
 SqliteDataBase::SqliteDataBase(const std::string& dbFileName)
 	: db(nullptr), m_dbFileName(dbFileName) {}
@@ -157,6 +159,13 @@ std::list<Question> SqliteDataBase::getQuestions(int amount)
 			std::string incorrectAnswer1Text = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
 			std::string incorrectAnswer2Text = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
 			std::string incorrectAnswer3Text = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
+
+			// Logging the lengths of the retrieved strings
+			std::cout << "DB_LOG: Question Text Length: " << questionText.length() << std::endl;
+			std::cout << "DB_LOG: Correct Answer Length: " << correctAnswerText.length() << std::endl;
+			std::cout << "DB_LOG: Incorrect Answer 1 Length: " << incorrectAnswer1Text.length() << std::endl;
+			std::cout << "DB_LOG: Incorrect Answer 2 Length: " << incorrectAnswer2Text.length() << std::endl;
+			std::cout << "DB_LOG: Incorrect Answer 3 Length: " << incorrectAnswer3Text.length() << std::endl;
 
 			std::vector<std::string> possibleAnswers;
 			possibleAnswers.push_back(correctAnswerText);
