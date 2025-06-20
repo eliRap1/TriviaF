@@ -85,8 +85,8 @@ RequestResult RoomAdminRequestHandler::startGame(RequestInfo& request)
 	//m_handlerFactory.getRoomManager().deleteRoom(roomId);
     StartGameResponse response{ 1 };
     auto buffer = JsonResponsePacketSerializer::serializeResponse(response);
-	IRequestHandler* handler = new GameRequestHandler(room, &m_loggedUser, &m_handlerFactory.getGameManager(), m_handlerFactory);
-    return { buffer, handler };
+
+    return { buffer, m_handlerFactory.createGameRequestHandler(m_loggedUser, room) };
 }
 
 RequestResult RoomAdminRequestHandler::getRoomState(RequestInfo& request)

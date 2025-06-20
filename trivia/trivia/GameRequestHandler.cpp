@@ -1,9 +1,8 @@
 #include "GameRequestHandler.h"
-#include <iostream> // Added for std::cerr
 using json = nlohmann::json;
 
-GameRequestHandler::GameRequestHandler(Game& game, LoggedUser* user, GameManager* gm, RequestHandlerFactory& factory)
-	: m_game(game), m_user(user), m_gameManager(gm), m_handlerFactory(factory)
+GameRequestHandler::GameRequestHandler(LoggedUser& user, Game& game, RequestHandlerFactory& factory)
+	: m_user(&user), m_game(game), m_handlerFactory(factory)
 {
 }
 
@@ -51,9 +50,6 @@ RequestResult GameRequestHandler::getQuestion(RequestInfo& request)
 	}
 	catch (const std::exception& e)
 	{
-            std::cerr << "HANDLER_EXCEPTION_LOG: Exception in getQuestion for user: "
-                      << (m_user ? m_user->getUsername() : "UNKNOWN_USER")
-                      << ". Error: " << e.what() << std::endl;
 		return { JsonResponsePacketSerializer::serializeResponse(ErrorResponse{ e.what() }), nullptr };
 	}
 

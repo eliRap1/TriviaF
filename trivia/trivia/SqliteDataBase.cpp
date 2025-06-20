@@ -1,7 +1,5 @@
 #include "SqliteDataBase.h"
 #include <iostream>
-#include <string>
-#include <vector>
 
 SqliteDataBase::SqliteDataBase(const std::string& dbFileName)
 	: db(nullptr), m_dbFileName(dbFileName) {}
@@ -46,10 +44,11 @@ void SqliteDataBase::createTables()
         CREATE TABLE IF NOT EXISTS questions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             question TEXT NOT NULL,
-            correct_answer TEXT NOT NULL,
-            incorrect1 TEXT NOT NULL,
-            incorrect2 TEXT NOT NULL,
-            incorrect3 TEXT NOT NULL
+            answer1 TEXT NOT NULL,
+            answer2 TEXT NOT NULL,
+            answer3 TEXT NOT NULL,
+            answer4 TEXT NOT NULL,
+            correct_answer INTEGER NOT NULL CHECK(correct_answer BETWEEN 1 AND 4)
         );
     )";
 
@@ -154,18 +153,25 @@ std::list<Question> SqliteDataBase::getQuestions(int amount)
 
 		while (sqlite3_step(stmt) == SQLITE_ROW)
 		{
-			std::string questionText = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
-			std::string correctAnswerText = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
-			std::string incorrectAnswer1Text = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
-			std::string incorrectAnswer2Text = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
-			std::string incorrectAnswer3Text = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
+			const unsigned char* qText = sqlite3_column_text(stmt, 0);
+			int qLen = sqlite3_column_bytes(stmt, 0);
+			std::string questionText(reinterpret_cast<const char*>(qText), qLen);
 
-			// Logging the lengths of the retrieved strings
-			std::cout << "DB_LOG: Question Text Length: " << questionText.length() << std::endl;
-			std::cout << "DB_LOG: Correct Answer Length: " << correctAnswerText.length() << std::endl;
-			std::cout << "DB_LOG: Incorrect Answer 1 Length: " << incorrectAnswer1Text.length() << std::endl;
-			std::cout << "DB_LOG: Incorrect Answer 2 Length: " << incorrectAnswer2Text.length() << std::endl;
-			std::cout << "DB_LOG: Incorrect Answer 3 Length: " << incorrectAnswer3Text.length() << std::endl;
+			const unsigned char* caText = sqlite3_column_text(stmt, 1);
+			int caLen = sqlite3_column_bytes(stmt, 1);
+			std::string correctAnswerText(reinterpret_cast<const char*>(caText), caLen);
+
+			const unsigned char* i1Text = sqlite3_column_text(stmt, 2);
+			int i1Len = sqlite3_column_bytes(stmt, 2);
+			std::string incorrectAnswer1Text(reinterpret_cast<const char*>(i1Text), i1Len);
+
+			const unsigned char* i2Text = sqlite3_column_text(stmt, 3);
+			int i2Len = sqlite3_column_bytes(stmt, 3);
+			std::string incorrectAnswer2Text(reinterpret_cast<const char*>(i2Text), i2Len);
+
+			const unsigned char* i3Text = sqlite3_column_text(stmt, 4);
+			int i3Len = sqlite3_column_bytes(stmt, 4);
+			std::string incorrectAnswer3Text(reinterpret_cast<const char*>(i3Text), i3Len);
 
 			std::vector<std::string> possibleAnswers;
 			possibleAnswers.push_back(correctAnswerText);
