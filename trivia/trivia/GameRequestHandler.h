@@ -3,7 +3,7 @@
 #include "RequestHandlerFactory.h"
 #include "json.hpp"
 #define TIME_PER_QUESTION 10
-class GameRequestHandler : IRequestHandler
+class GameRequestHandler : public IRequestHandler
 {
 private:
 	Game& m_game;
@@ -18,6 +18,6 @@ private:
 public:
 	bool isRequestRelevant(const RequestInfo& request) override;
 	RequestResult handleRequest(RequestInfo& request) override;
-	GameRequestHandler(Game& game, LoggedUser* user, GameManager* gameManager, RequestHandlerFactory& handlerFactory);
+	GameRequestHandler(LoggedUser& user, Game& game, RequestHandlerFactory& factory);
 };
 

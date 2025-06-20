@@ -35,7 +35,7 @@ namespace client
                 MessageBox.Show("Please correct the highlighted fields.");
                 return;
             }
-            if(PlayersAmountTextBox.Text == "" || QuestionTimeTextBox.Text == "" || RoomNameTextBox.Text == "" || QuestionAmount.Text == "")
+            if(PlayersAmountTextBox.Text == "" || QuestionTimeTextBox.Text == "" || RoomNameTextBox.Text == "" || QuestionAmount.Text == "" || int.Parse(PlayersAmountTextBox.Text) < 1 || int.Parse(QuestionTimeTextBox.Text) < 1 || int.Parse(QuestionAmount.Text) < 1)
             {
                 MessageBox.Show("Please correct the highlighted fields.");
                 return;

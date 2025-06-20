@@ -189,8 +189,8 @@ namespace client
             {
                 byte[] jsonBytes = responseData.Skip(headerSize).ToArray();
                 string json = Encoding.UTF8.GetString(jsonBytes);
-                GetQuestionResponse a = JsonConvert.DeserializeObject<GetQuestionResponse>(json);
-                return a;
+
+                return JsonConvert.DeserializeObject<GetQuestionResponse>(json);
             }
             catch (Exception e)
             {

@@ -37,9 +37,9 @@ namespace client
                 return new ValidationResult(false, "Input should be only numbers");
             }
 
-            if (input < 1 || input > 30)
+            if (input < 1 || input > 10)
             {
-                return new ValidationResult(false, "Input should be between 1 and 30");
+                return new ValidationResult(false, "Input should be between 1 and 10");
             }
 
             return ValidationResult.ValidResult;

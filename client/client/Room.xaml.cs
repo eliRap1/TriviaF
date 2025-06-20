@@ -114,6 +114,9 @@ namespace client
             byte[] response = MainWindow.communicator.sendAndReceive(request);
             //MessageBox.Show("Status: "+Deserializer.extractStatus(response).ToString());
             gameStarted = true;
+            MessageBox.Show("Game has started!");
+            triviaF.Navigate(new Game(this.room1));
+            updatePlayersTimer.Stop();
         }
     }
 }

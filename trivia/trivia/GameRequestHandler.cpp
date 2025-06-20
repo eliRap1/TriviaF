@@ -1,8 +1,8 @@
 #include "GameRequestHandler.h"
 using json = nlohmann::json;
 
-GameRequestHandler::GameRequestHandler(Game& game, LoggedUser* user, GameManager* gm, RequestHandlerFactory& factory)
-	: m_game(game), m_user(user), m_gameManager(gm), m_handlerFactory(factory)
+GameRequestHandler::GameRequestHandler(LoggedUser& user, Game& game, RequestHandlerFactory& factory)
+	: m_user(&user), m_game(game), m_handlerFactory(factory)
 {
 }
 
