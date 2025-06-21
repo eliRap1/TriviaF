@@ -4,12 +4,14 @@
 #include <map>
 #include "LoggedUser.h"
 #include "IDatabase.h"
+#include <iostream>
 class Game {
 public:
     Game(unsigned int gameId, const std::vector<Question>& questions, IDatabase* db);
 
     Question getQuestionForUser(const LoggedUser& user);
     void submitAnswer(const LoggedUser& user, unsigned int answer, unsigned int time);
+	void addPlayer(const LoggedUser& user);
     void removePlayer(const LoggedUser& user);
     void sumitGameStatsToDB(const LoggedUser& user);
     unsigned int getGameId() const;

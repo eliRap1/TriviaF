@@ -64,6 +64,7 @@ SumbitAnswerRequest JsonRequestPacketDeserializer::deserializeSumbitAnswerReques
 {
 	SumbitAnswerRequest req;
 	auto j = nlohmann::json::parse(buffer.begin(), buffer.end());
-	req.answerId = j["answerId"];
+	std::string answerId = j["answerId"];
+	req.answerId = std::atoi(answerId.c_str());
 	return req;
 }

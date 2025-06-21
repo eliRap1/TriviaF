@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Lifetime;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,9 +23,11 @@ namespace client
     public partial class Game : Page
     {
         private readonly DispatcherTimer timer;
+        private readonly DispatcherTimer resultTimer;
         private double timeLeft;       // seconds remaining
         private readonly double timePerQuestion; // from room settings
         private int currentIndex;
+        private int Count;
         private int correctCount;
         private double totalAnswerTime;
         //public class PlayerResult
@@ -41,81 +44,125 @@ namespace client
             timer.Tick += Timer_Tick;
             timer.Start();
             currentIndex = 0;
-            correctCount = room.numOfQuestionsInGame;
+            Count = room.numOfQuestionsInGame;
             timePerQuestion = room.timePerQuestion;
             timeLeft = timePerQuestion;
             totalAnswerTime = timeLeft * room.numOfQuestionsInGame;
-            QuestionsLeftText.Text = correctCount.ToString();
+            QuestionsLeftText.Text = Count.ToString();
             QuestionTimerBar.Maximum = timePerQuestion;
             QuestionTimerBar.Value = timeLeft;
+            correctCount = 0;
+            resultTimer = new DispatcherTimer();
             NextQuestion();
 
         }
-
+        private void Leave_Click(object sender, RoutedEventArgs e)
+        {
+            resultTimer.Stop();
+            byte[] request = Serializer.SerializeSimpleRequest(Serializer.LEAVE_ROOM_CODE);
+            byte[] response = MainWindow.communicator.sendAndReceive(request);
+            page.Navigate(new Trivia());
+        }
         private void Answer_Click(object sender, RoutedEventArgs e)
         {
             byte[] request = Serializer.SerializeSumbitAnswerRequest(Convert.ToInt32((sender as Button).Tag));
             byte[] response = MainWindow.communicator.sendAndReceive(request);
             AnswerResponse answer = Deserializer.DeserializeAnswerResponse(response);
+            currentIndex++;
             if (answer.correctAnswerId == Convert.ToInt32((sender as Button).Tag))
             {
-                currentIndex++;
-                if (currentIndex == correctCount)
+                correctCount++;
+                CorrectSoFarText.Text = correctCount.ToString();
+            }
+            if (currentIndex == Count)
+            {
+                Results(null, null);
+                timer.Stop();
+                resultTimer.Interval = TimeSpan.FromSeconds(3);
+                resultTimer.Tick += Results;
+                resultTimer.Start();
+            }
+            else
+            {
+                NextQuestion();
+                QuestionTimerBar.Maximum = timePerQuestion;
+                QuestionTimerBar.Value = timePerQuestion;
+                timeLeft = timePerQuestion;
+                timer.Start();
+            }
+        }
+            private void Results(object sender, EventArgs e)
+        {
+            leaveBtn.Visibility = Visibility.Visible;
+            ResultsView.Visibility = Visibility.Visible;
+            QuestionView.Visibility = Visibility.Collapsed;
+            byte[] request = Serializer.SerializeSimpleRequest(Serializer.GET_GAME_RESULTS_CODE);
+            byte[] response = MainWindow.communicator.sendAndReceive(request);
+            GetGameResultsResponse game = Deserializer.DeserializeGetGameResultsResponse(response);
+            ResultsList.ItemsSource = game.results;
+            string winPlayer = "";
+            int correctMax = -1;
+            foreach (PlayerResults player in game.results)
+            {
+                if (player.correctAnswerCount > correctMax)
                 {
-                    timer.Stop();
-                    ResultsView.Visibility = Visibility.Visible;
-                    QuestionView.Visibility = Visibility.Collapsed;
-                    byte[] request1 = Serializer.SerializeSimpleRequest(Serializer.GET_GAME_RESULTS_CODE);
-                    byte[] response1 = MainWindow.communicator.sendAndReceive(request1);
-                    GetGameRequest game = Deserializer.DeserializeGetGameRequest(response1);
-                    ResultsList.ItemsSource = game.players;
-                }
-                else
-                {
-                    NextQuestion();
+                    winPlayer = player.username;
+                    correctMax = player.correctAnswerCount;
                 }
             }
-               
-            QuestionTimerBar.Maximum = timePerQuestion;
-            QuestionTimerBar.Value = timePerQuestion;
-            timeLeft = timePerQuestion;
-            timer.Start();
+            WinnerText.Text = "Winner: " + winPlayer;
         }
         private void NextQuestion()
         {
+            QuestionTimerBar.Maximum = timePerQuestion;
+            QuestionTimerBar.Value = timePerQuestion;
+            timeLeft = timePerQuestion;
             timer.Start();
             byte[] request = Serializer.SerializeSimpleRequest(Serializer.GET_QUESTION_CODE);
             byte[] response = MainWindow.communicator.sendAndReceive(request);
             GetQuestionResponse qusestion = Deserializer.DeserializeGetQuestionResponse(response);
             QuestionText.Text = qusestion.question;
-            AnswerButton1.Content = qusestion.answers.Values.ElementAt(0);
-            AnswerButton2.Content = qusestion.answers.Values.ElementAt(1);
-            AnswerButton3.Content = qusestion.answers.Values.ElementAt(2);
-            AnswerButton4.Content = qusestion.answers.Values.ElementAt(3);
-            AnswerButton1.Tag = qusestion.answers.Keys.ElementAt(0);
-            AnswerButton2.Tag = qusestion.answers.Keys.ElementAt(1);
-            AnswerButton3.Tag = qusestion.answers.Keys.ElementAt(2);
-            AnswerButton4.Tag = qusestion.answers.Keys.ElementAt(3);
+            List<int> indices = new List<int>(qusestion.answers.Keys);
+
+            // Shuffle the list
+            Random rng = new Random();
+            indices = indices.OrderBy(_ => rng.Next()).ToList();
+
+            AnswerButton1.Content = qusestion.answers[indices[0]];
+            AnswerButton2.Content = qusestion.answers[indices[1]];
+            AnswerButton3.Content = qusestion.answers[indices[2]];
+            AnswerButton4.Content = qusestion.answers[indices[3]];
+
+            AnswerButton1.Tag = indices[0];
+            AnswerButton2.Tag = indices[1];
+            AnswerButton3.Tag = indices[2];
+            AnswerButton4.Tag = indices[3];
+
         }
         private void Timer_Tick(object sender, EventArgs e)
         {
+            
             timeLeft -= timer.Interval.TotalSeconds;
             if (timeLeft <= 0)
             {
                 timer.Stop();
-                // treat as incorrect and move on
                 currentIndex++;
-                if (currentIndex == correctCount)
+                if (currentIndex == Count)
                 {
                     timer.Stop();
-                    ResultsView.Visibility = Visibility.Visible;
-                    QuestionView.Visibility = Visibility.Collapsed;
-                    byte[] request = Serializer.SerializeSimpleRequest(Serializer.GET_GAME_RESULTS_CODE);
-                    byte[] response = MainWindow.communicator.sendAndReceive(request);
-                    GetGameRequest game = Deserializer.DeserializeGetGameRequest(response);
-                    ResultsList.ItemsSource = game.players;
+                    Results(null, null);
+                    timer.Stop();
+                    resultTimer.Interval = TimeSpan.FromSeconds(3);
+                    resultTimer.Tick += Results;
+                    resultTimer.Start();
                 }
-                NextQuestion();
+                else
+                {
+                   byte[] request = Serializer.SerializeSumbitAnswerRequest(-1);
+                   byte[] response = MainWindow.communicator.sendAndReceive(request);
+                   NextQuestion();
+                }
+                
             }
             else
             {

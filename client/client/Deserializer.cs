@@ -39,18 +39,20 @@ namespace client
         [JsonProperty("players")]
         public List<string> Players { get; set; }
     }
-    public class GetGameRequest
+    public class GetGameResultsResponse
     {
         public int status { get; set; }
-        public List<PlayerRequest> players { get; set; }
+        public List<PlayerResults> results { get; set; }
     }
-    public class PlayerRequest
+
+    public class PlayerResults
     {
-        string username { get; set; }
-        int correctAnswerCount { get; set; }
-        int wrongAnswerCount { get; set; }
-        int averageAnswerTime { get; set; }
+        public string username { get; set; }
+        public int correctAnswerCount { get; set; }
+        public int wrongAnswerCount { get; set; }
+        public int averageAnswerTime { get; set; }
     }
+
 
     public class GetQuestionResponse
     {
@@ -158,26 +160,27 @@ namespace client
                 return new GetRoomStateResponse();
             }
         }
-        public static GetGameRequest DeserializeGetGameRequest(byte[] responseData)
+        public static GetGameResultsResponse DeserializeGetGameResultsResponse(byte[] responseData)
         {
-            const int headerSize = 5; // skip the header
+            const int headerSize = 5;
 
             if (responseData.Length <= headerSize)
-                return new GetGameRequest(); // invalid response
+                return new GetGameResultsResponse(); // Invalid response
 
             try
             {
                 byte[] jsonBytes = responseData.Skip(headerSize).ToArray();
                 string json = Encoding.UTF8.GetString(jsonBytes);
 
-                return JsonConvert.DeserializeObject<GetGameRequest>(json);
+                return JsonConvert.DeserializeObject<GetGameResultsResponse>(json);
             }
             catch (Exception e)
             {
                 MessageBox.Show($"Error while deserializing: {e.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return new GetGameRequest();
+                return new GetGameResultsResponse();
             }
         }
+
         public static GetQuestionResponse DeserializeGetQuestionResponse(byte[] responseData)
         {
             const int headerSize = 5; // skip the header

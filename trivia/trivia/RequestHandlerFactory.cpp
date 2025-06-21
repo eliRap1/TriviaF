@@ -14,10 +14,11 @@ RequestHandlerFactory::RequestHandlerFactory(IDatabase* database)
 {
 }
 
-IRequestHandler* RequestHandlerFactory::createGameRequestHandler( LoggedUser& user, const Room& room)
+IRequestHandler* RequestHandlerFactory::createGameRequestHandler(const LoggedUser& user, const Room& room)
 {
-	Game& game = m_gameManager.createGame(room);
-	return new GameRequestHandler(user, game, *this);
+	Game* game = m_gameManager.createGame(room);
+	game->addPlayer(user);
+	return new GameRequestHandler(user, *game, *this);
 }
 
 IRequestHandler* RequestHandlerFactory::createLoginRequestHandler()

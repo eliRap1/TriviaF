@@ -16,7 +16,7 @@ class RequestHandlerFactory
 public:
 	RequestHandlerFactory(IDatabase* database);
 
-	IRequestHandler* createGameRequestHandler(LoggedUser& user, const Room& room);
+	IRequestHandler* createGameRequestHandler(const LoggedUser& user, const Room& room);
 	IRequestHandler* createLoginRequestHandler();
 	IRequestHandler* createMenuRequestHandler(const LoggedUser& user);
 	RoomAdminRequestHandler* createRoomAdminRequestHandler(const LoggedUser& user);

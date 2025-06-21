@@ -92,6 +92,7 @@
                     <GridView>
                         <GridViewColumn Header="Player"    DisplayMemberBinding="{Binding username}"       Width="200"/>
                         <GridViewColumn Header="Correct"   DisplayMemberBinding="{Binding correctAnswerCount}"    Width="100"/>
+                        <GridViewColumn Header="Incorrect" DisplayMemberBinding="{Binding wrongAnswerCount}"  Width="100"/>
                         <GridViewColumn Header="Avg Time"  DisplayMemberBinding="{Binding averageAnswerTime}"    Width="150"/>
                     </GridView>
                 </ListView.View>
@@ -107,6 +108,18 @@
                        HorizontalAlignment="Center"
                        Margin="0,20,0,0"/>
         </Grid>
-
+        <Button x:Name= "leaveBtn" Content="Leave"
+                Visibility="Hidden"
+                Width="80"
+                Height="35"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Margin="20"
+                Click="Leave_Click"
+                Background="#2196F3"
+                Foreground="White"
+                FontWeight="Bold"
+                BorderThickness="0"/>
+        <Frame x:Name="page" NavigationUIVisibility="Hidden" Panel.ZIndex="1" Margin="-24,-19,-24,-19"/>
     </Grid>
 </Page>

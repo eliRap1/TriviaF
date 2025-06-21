@@ -303,7 +303,7 @@ int SqliteDataBase::getNumOfPlayerGames(const std::string& username)
 
 int SqliteDataBase::submitGameStatistics(const GameData& data) {
 	try {
-		std::string sql = "INSERT INTO GameStatistics (correctAnswers, wrongAnswers, averageTime) VALUES (?, ?, ?);";
+		std::string sql = "INSERT INTO statistics (correctAnswers, wronganswers, averageTime) VALUES (?, ?, ?);";
 		sqlite3_stmt* stmt;
 		if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) != SQLITE_OK)
 			return 0;

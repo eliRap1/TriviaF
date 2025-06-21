@@ -84,6 +84,10 @@ RequestResult RoomMemberRequestHandler::getRoomState(RequestInfo& request)
         data.numOfQuestionsInGame,
         data.timePerQuestion
     };
-
-    return { JsonResponsePacketSerializer::serializeResponse(response), this };
+	IRequestHandler* handler = this;
+	if(started)
+	{
+		handler = m_handlerFactory.createGameRequestHandler(m_loggedUser, room);
+	}
+    return { JsonResponsePacketSerializer::serializeResponse(response), handler };
 }

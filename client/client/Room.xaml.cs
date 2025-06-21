@@ -76,7 +76,7 @@ namespace client
             }
             if(state.status == 0)
             {
-                MessageBox.Show("Admin left the room!/ Closing room");
+                MessageBox.Show("Admin left the room -> Closing room");
                 Back_Click(null, new RoutedEventArgs());
                 updatePlayersTimer.Stop();
             }
@@ -109,6 +109,7 @@ namespace client
 
         private void start_Click(object sender, RoutedEventArgs e)
         {
+            updatePlayersTimer.Stop();
             adminName.Text = Login.user + " (Admin)";
             byte[] request = Serializer.SerializeSimpleRequest(Serializer.START_GAME_CODE);
             byte[] response = MainWindow.communicator.sendAndReceive(request);
@@ -116,7 +117,6 @@ namespace client
             gameStarted = true;
             MessageBox.Show("Game has started!");
             triviaF.Navigate(new Game(this.room1));
-            updatePlayersTimer.Stop();
         }
     }
 }
