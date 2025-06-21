@@ -7,7 +7,9 @@ Game::Game(unsigned int gameId, const std::vector<Question>& questions, IDatabas
 
 Question Game::getQuestionForUser(const LoggedUser& user) {
     auto& data = m_players[user];
-    if (data.correctAnswerCount + data.wrongAnswerCount < m_questions.size()) {
+	std::cout << "GAME GAME ID: " << m_gameId << std::endl;
+    if (data.correctAnswerCount + data.wrongAnswerCount < m_questions.size()) 
+	{
         data.currentQuestion = m_questions[data.correctAnswerCount + data.wrongAnswerCount];
         return data.currentQuestion;
     }
@@ -40,12 +42,13 @@ void Game::removePlayer(const LoggedUser& user) {
 void Game::sumitGameStatsToDB(const LoggedUser& user) {
     if (m_database && m_players.count(user)) {
         const GameData& data = m_players[user];
-        m_database->submitGameStatistics(user.getUsername(), data);
+        m_database->submitGameStatistics(data);
     }
 }
 
 unsigned int Game::getGameId() const
 {
+	std::cout << "Game id: " << m_gameId << std::endl;
     return m_gameId;
 }
 

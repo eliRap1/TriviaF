@@ -4,6 +4,7 @@ using json = nlohmann::json;
 GameRequestHandler::GameRequestHandler(const LoggedUser& user,Game& game, RequestHandlerFactory& factory)
 	: m_user(user), m_game(game), m_handlerFactory(factory)
 {
+	std::cout << "GameRequestHandler:: Game ID: " << m_game.getGameId() << "" << std::endl;
 	m_gameManager = &m_handlerFactory.getGameManager();
 }
 

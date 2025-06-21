@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-enum class RoomStatus { Waiting, Active, Closed };
+enum class RoomStatus {CLOSED, STARTED, WAITING};
 typedef struct RoomData
 {
 	unsigned int id;

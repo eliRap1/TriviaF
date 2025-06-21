@@ -18,6 +18,7 @@ namespace client
         public int maxPlayers { get; set; }
         public int numOfQuestionsInGame { get; set; }
         public int timePerQuestion { get; set; }
+        public int state { get; set; }
     }
     public class GetRoomStateResponse
     {

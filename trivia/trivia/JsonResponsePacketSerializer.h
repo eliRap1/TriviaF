@@ -44,6 +44,7 @@ typedef struct LogoutResponse {
 typedef struct GetRoomResponse {
 	unsigned int status;
 	std::vector<json> rooms;
+	unsigned int state;
 } GetRoomResponse;
 
 typedef struct GetPlayersInRoomResponse {

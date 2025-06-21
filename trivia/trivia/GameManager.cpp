@@ -18,7 +18,6 @@ Game* GameManager::createGame(const Room& room)
 
 	std::list<Question> questions = m_database->getQuestions(room.getRoomData().numOfQuestionsInGame);
 	std::vector<Question> questionVec(questions.begin(), questions.end());
-
 	Game newGame(room.getRoomData().id, questionVec, m_database);
 	m_games.push_back(std::move(newGame));
 	return &m_games.back();

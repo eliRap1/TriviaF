@@ -32,7 +32,8 @@ namespace client
 
             foreach (var room in rooms)
             {
-                AddRoomCard(room);
+                if (room.state == 2)
+                    AddRoomCard(room);
             }
             updateTimer = new DispatcherTimer();
             updateTimer.Interval = TimeSpan.FromSeconds(3);
@@ -51,7 +52,8 @@ namespace client
 
             foreach (var room in rooms)
             {
-                AddRoomCard(room);
+                if (room.state == 2)
+                    AddRoomCard(room);
             }
         }
         private void AddRoomCard(RoomInfo room)

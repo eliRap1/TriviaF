@@ -50,7 +50,7 @@ RequestResult RoomAdminRequestHandler::closeRoom(RequestInfo& request)
 		m_handlerFactory.getRoomManager().getRoom(roomId).removeUser(user);
 	}*/
     auto& room = m_handlerFactory.getRoomManager().getRoom(roomId);
-    room.setState(Room::RoomState::CLOSED);
+    room.setState(RoomStatus::CLOSED);
 
     LeaveRoomResponse response{ 1 };
     auto buffer = JsonResponsePacketSerializer::serializeResponse(response);
@@ -81,7 +81,7 @@ RequestResult RoomAdminRequestHandler::startGame(RequestInfo& request)
     }
 
     auto& room = m_handlerFactory.getRoomManager().getRoom(roomId);
-    room.setState(Room::RoomState::STARTED);
+    room.setState(RoomStatus::STARTED);
 	//m_handlerFactory.getRoomManager().deleteRoom(roomId);
     StartGameResponse response{ 1 };
     auto buffer = JsonResponsePacketSerializer::serializeResponse(response);
@@ -112,7 +112,7 @@ RequestResult RoomAdminRequestHandler::getRoomState(RequestInfo& request)
     auto& room = m_handlerFactory.getRoomManager().getRoom(roomId);
     RoomData data = room.getRoomData();
     auto users = room.getUsers();
-    bool started = room.getState() == Room::RoomState::STARTED;
+    bool started = room.getState() == RoomStatus::STARTED;
 
     GetRoomStateResponse response{
         static_cast<int>(room.getState()),

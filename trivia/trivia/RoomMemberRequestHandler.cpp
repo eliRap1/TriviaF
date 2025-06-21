@@ -75,7 +75,7 @@ RequestResult RoomMemberRequestHandler::getRoomState(RequestInfo& request)
     auto& room = m_handlerFactory.getRoomManager().getRoom(roomId);
     RoomData data = room.getRoomData();
     auto users = room.getUsers();
-    bool started = room.getState() == Room::RoomState::STARTED;
+    bool started = room.getState() == RoomStatus::STARTED;
 
     GetRoomStateResponse response{
         static_cast<int>(room.getState()),

@@ -60,6 +60,7 @@ std::vector<unsigned char> JsonResponsePacketSerializer::serializeResponse(const
 	json j;
 	j["status"] = res.status;
 	j["rooms"] = res.rooms;
+	j["state"] = res.state;
 	std::string dump = j.dump();
 	std::vector<unsigned char> buffer;
 	buffer.push_back(GET_ROOMS_CODE);

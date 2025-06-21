@@ -80,6 +80,7 @@ RequestResult MenuRequestHandler::getRooms(RequestInfo& request)
 		j["maxPlayers"] = room.maxPlayers;
 		j["numOfQuestionsInGame"] = room.numOfQuestionsInGame;
 		j["timePerQuestion"] = room.timePerQuestion;
+		j["state"] = room.status;
 		roomsJson.push_back(j);
 	}
 
@@ -106,7 +107,7 @@ RequestResult MenuRequestHandler::createRoom(RequestInfo& request)
 	data.maxPlayers = req.maxUsers;
 	data.numOfQuestionsInGame = req.QuestionsCount;
 	data.timePerQuestion = req.answerTimeout;
-
+	data.status = RoomStatus::WAITING;
 	m_handlerFactory.getRoomManager().createRoom(m_loggedUser, data);
 
 	CreateRoomResponse response{ 1 };
